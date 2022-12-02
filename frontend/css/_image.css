@@ -1,0 +1,31 @@
+/* ---- ---- ---- ---- IMG columns (and related) ---- ---- ---- ---- */
+.imgCell div {
+	z-index: 999;
+	text-align: center;
+}	
+.imgCell img {
+	max-height: 22px;
+}
+.imgCell span {
+	display:none;
+	text-align: center;
+}
+.imgCell:hover span {
+	display:block
+}
+.imgCell:hover span a {color:white !important}
+
+.imgCell:hover {
+	background-color: rgba(82, 82, 82);
+}
+.imgCell:hover div {
+	position: fixed;
+	right: 10px;
+	top: 10px;
+	width: 500px;
+	max-width: 40%;
+}
+.imgCell:hover img {
+	object-fit: contain;
+	max-height: 100%;
+}
