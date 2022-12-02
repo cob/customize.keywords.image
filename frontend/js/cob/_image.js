@@ -1,15 +1,12 @@
 //----------------- $image  ------------------------
 cob.custom.customize.push(function (core, utils, ui) {
+  const matcher = /[$]image(.add|.replace)?(\(.+\))?/;
+
   core.customizeAllInstances((instance, presenter) => {
     if (instance.isNew() || presenter.isGroupEdit()) return;
 
-    let imagesFPs = presenter.findFieldPs((fp) =>
-      /[$]image(.add|.replace)?(\(.+\))?/.exec(
-        fp.field.fieldDefinition.description
-      )
-    );
+    let imagesFPs = presenter.findFieldPs((fp) => matcher.exec( fp.field.fieldDefinition.description ) );
     imagesFPs.forEach((fp) => {
-      let matcher = /[$]image(.add|.replace)?(\(.+\))?/;
       let args = fp.field.fieldDefinition.description.match(matcher);
       let replaceFlag = (args && args[1] && args[1] == ".replace") || false;
       let width = (args && args[2]) || "";
