@@ -1,6 +1,6 @@
 //----------------- $image  ------------------------
 cob.custom.customize.push(function (core, utils, ui) {
-  const matcher = /[$]image(.add|.replace)?(\(.+\))?/;
+  const matcher = /[$]image(\(.+\))?/;
 
   core.customizeAllInstances((instance, presenter) => {
     if (instance.isNew() || presenter.isGroupEdit()) return;
@@ -8,11 +8,11 @@ cob.custom.customize.push(function (core, utils, ui) {
     let imagesFPs = presenter.findFieldPs((fp) => matcher.exec( fp.field.fieldDefinition.description ) );
     imagesFPs.forEach((fp) => {
       let args = fp.field.fieldDefinition.description.match(matcher);
-      let replaceFlag = (args && args[1] && args[1] == ".replace") || false;
-      let width = (args && args[2]) || "";
-      debugger;
+
+      let replaceFlag = args && args[1] && args[1].match(/\(\[.*replace:true.*\]\)/).length == 1 || false
+      let width = (args && args[1]) && args[1].match(/\(\[.*width:(\d+).*\]\)/) && args[1].match(/\(\[.*width:(\d+).*\]\)/)[1] || "";
       let $image = $(
-        '<div style="width:100%;text-align:center">' +
+        '<div style="width:100%;">' +
           "<img " +
             (width ? 'style="width:' + width + 'px" ' : "") +
             'src="' +
