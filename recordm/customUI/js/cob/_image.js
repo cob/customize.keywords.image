@@ -9,10 +9,12 @@ cob.custom.customize.push(function (core, utils, ui) {
     imagesFPs.forEach((fp) => {
       const argsMatch = fp.field.fieldDefinition.description.match(matcher);
       const args = argsMatch && argsMatch[1]
+      
       const replaceArgMatcher = /\(\[.*replace:true.*\]\)/;
       const widthArgMatcher = /\(\[.*width:(\d+).*\]\)/;
-      const replaceFlag = args.match(replaceArgMatcher) && args.match(replaceArgMatcher).length == 1
-      const width = args.match(widthArgMatcher) && args.match(widthArgMatcher)[1] || "";
+      
+      const replaceFlag = args && args.match(replaceArgMatcher) && args.match(replaceArgMatcher).length == 1
+      const width = args && args.match(widthArgMatcher) && args.match(widthArgMatcher)[1] || "";
       // ImgLink differs if the field is a $file or a $link 
       const imgLink = fp.field.fieldDefinition.description.match(/[$]file/)
                       ? $(fp.content()[0]).find(".link-container a")[0] && $(fp.content()[0]).find(".link-container a")[0].href
