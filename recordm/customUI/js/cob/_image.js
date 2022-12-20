@@ -37,14 +37,22 @@ cob.custom.customize.push(function (core, utils, ui) {
 
   core.customizeAllColumns("*", function (node, esDoc, fieldInfo) {
     if (matcher.exec(fieldInfo.fieldDefDescription)) {
-      node.classList.add("imgCell");
-      if(node.childElementCount == 1) {
-        // insert image inline
-        const aNode = node.childNodes[0]
-        aNode.innerHTML = "Link"
-        node.innerHTML = "<span>"+aNode.outerHTML+"</span>"
-                        +"<div> <img loading='lazy' src='"+aNode.href+"'></img> </div> "
-     }
+      node.classList.add("dollarImgCell");
+      for(let childNode of node.childNodes) {
+        if(childNode.className == "link") {
+          const imgRegex = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/i
+          if( childNode.href.match(imgRegex)) {
+            childNode.innerHTML = "<div class='dollarImageDiv' style='display:inline'>"
+                                 +" <div class='dollarImageText'>link</div>"
+                                 +" <img class='dollarImageImg'loading='lazy' src='"+childNode.href+"'></img>"
+                                 +"</div>"
+          } else {
+            childNode.innerHTML = "Link"
+          }
+        } else {
+          childNode.textContent = " "
+        }
+      }
     }
   });
 })

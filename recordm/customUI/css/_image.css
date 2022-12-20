@@ -1,31 +1,30 @@
 /* ---- ---- ---- ---- IMG columns (and related) ---- ---- ---- ---- */
-.imgCell div {
-	z-index: 999;
-	text-align: center;
-}	
-.imgCell img {
+.dollarImgCell {
+	text-align: center;;
+}
+
+/* ---- ----  TEXT ---- ---- */
+.dollarImgCell .dollarImageText {
+	display:none;
+}
+.dollarImgCell .dollarImageDiv:hover .dollarImageText {
+	display:inline-block;
+	font-size: 11px;
+}
+
+
+/* ---- ----  IMG ---- ---- */
+.dollarImgCell .dollarImageImg {
+	object-fit: contain;
+	max-width: 22px;
 	max-height: 22px;
 }
-.imgCell span {
-	display:none;
-	text-align: center;
-}
-.imgCell:hover span {
-	display:block
-}
-.imgCell:hover span a {color:white !important}
-
-.imgCell:hover {
-	background-color: rgba(82, 82, 82);
-}
-.imgCell:hover div {
+.dollarImgCell .dollarImageDiv:hover .dollarImageImg {
+	z-index: 999;
 	position: fixed;
 	right: 10px;
 	top: 10px;
 	width: 500px;
 	max-width: 40%;
-}
-.imgCell:hover img {
-	object-fit: contain;
 	max-height: 100%;
 }
