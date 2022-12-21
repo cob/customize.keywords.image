@@ -3,23 +3,21 @@
 	text-align: center;;
 }
 
-/* ---- ----  TEXT ---- ---- */
-.dollarImgCell .dollarImageText {
-	display:none;
+.dollarImageDiv {
+	display:inline;
 }
-.dollarImgCell .dollarImageDiv:hover .dollarImageText {
+
+.dollarImgCell .dollarImageItem {
 	display:inline-block;
-	font-size: 11px;
+	max-width: 22px;
 }
 
 
-/* ---- ----  IMG ---- ---- */
-.dollarImgCell .dollarImageImg {
-	object-fit: contain;
-	max-width: 22px;
-	max-height: 22px;
+.dollarImgCell .dollarImageDiv .dollarImageImg {
+	display:none
 }
 .dollarImgCell .dollarImageDiv:hover .dollarImageImg {
+	display:block;
 	z-index: 999;
 	position: fixed;
 	right: 10px;

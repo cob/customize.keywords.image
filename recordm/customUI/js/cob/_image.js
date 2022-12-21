@@ -42,10 +42,11 @@ cob.custom.customize.push(function (core, utils, ui) {
         if(childNode.className == "link") {
           const imgRegex = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/i
           if( childNode.href.match(imgRegex)) {
-            childNode.innerHTML = "<div class='dollarImageDiv' style='display:inline'>"
-                                 +" <div class='dollarImageText'>link</div>"
+            childNode.innerHTML = "<div class='dollarImageDiv'>"
+                                 +" <div class='dollarImageItem'><img src='"+childNode.href+"'></img></div>"
                                  +" <img class='dollarImageImg'loading='lazy' src='"+childNode.href+"'></img>"
                                  +"</div>"
+            childNode.removeAttribute("href")
           } else {
             childNode.innerHTML = "Link"
           }
