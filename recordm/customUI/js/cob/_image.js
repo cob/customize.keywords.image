@@ -20,16 +20,41 @@ cob.custom.customize.push(function (core, utils, ui) {
                       ? $(fp.content()[0]).find(".link-container a")[0] && $(fp.content()[0]).find(".link-container a")[0].href
                       : fp.field.htmlEncodedValue
       if(imgLink) {
+
         const $image = $(
-          '<div style="width:100%;">' +
-            "<img " +
-              (width ? 'style="width:' + width + 'px" ' : "") +
+          '<div class="tooltip-hover"'+ (width ? 'style="width:' + width + 'px" ' : "") +'>' +
+            '<img ' +
               'src="' + imgLink + '">' +
             "</img>" +
+            "<span "+ (width ? 'style="width:' + width + 'px" ' : "") +">Click to toggle image details</span>" +
           "</div>"
         );
         fp.content()[0].append($image[0]);
-        fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";  
+        fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";
+        $image[0].onclick = onImageClick
+
+        // on image click
+        // replace flag -> changed to false / true (depending on current state)
+        // hides or shows extra details on click
+
+        let show = 1
+        if(replaceFlag)
+          show = 0;
+
+        function onImageClick(){
+          if(show){
+            const replaceArgMatcher = /\(\[.*replace:false.*\]\)/;
+            const replaceFlag = args && args.match(replaceArgMatcher) && args.match(replaceArgMatcher).length == 1
+            fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";
+            show = 0
+          }
+          else{
+            const replaceArgMatcher = /\(\[.*replace:true.*\]\)/;
+            const replaceFlag = args && args.match(replaceArgMatcher) && args.match(replaceArgMatcher).length == 1
+            fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";
+            show = 1
+          }
+        }
       }
     });
   });
