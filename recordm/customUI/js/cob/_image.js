@@ -39,14 +39,9 @@ cob.custom.customize.push(function (core, utils, ui) {
         // replace flag -> changed to false / true (depending on current state)
         // hides or shows extra details on click
 
-        let show = true
-        if(replaceFlag)
-          show = false;
-
+        let show = replaceFlag
         function onImageClick2(){
-          const replaceArgMatcher = new RegExp(`\\(\\[.*replace:${show ? 'false' : 'true' }.*\\]\\)`);
-          const replaceFlag = args && args.match(replaceArgMatcher) && args.match(replaceArgMatcher).length == 1
-          fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";
+          fp.content()[0].children[0].style.display = show ? "none" : "";
           show = !show
         }
       }
