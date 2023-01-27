@@ -21,12 +21,14 @@ cob.custom.customize.push(function (core, utils, ui) {
                       : fp.field.htmlEncodedValue
       if(imgLink) {
 
+        let widthCalc = (width ? 'style="width:' + width + 'px" ' : "")
+
         const $image = $(
-          '<div class="tooltip-hover"'+ (width ? 'style="width:' + width + 'px" ' : "") +'>' +
+          '<div class="tooltip-hover"'+ widthCalc +'>' +
             '<img ' +
               'src="' + imgLink + '">' +
             "</img>" +
-            "<span "+ (width ? 'style="width:' + width + 'px" ' : "") +">Click to toggle image details</span>" +
+            "<span "+ widthCalc +">Click to toggle image details</span>" +
           "</div>"
         );
         fp.content()[0].append($image[0]);
