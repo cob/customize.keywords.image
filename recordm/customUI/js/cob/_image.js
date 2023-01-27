@@ -33,7 +33,7 @@ cob.custom.customize.push(function (core, utils, ui) {
         );
         fp.content()[0].append($image[0]);
         fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";
-        $image[0].onclick = onImageClick
+        $image[0].onclick = onImageClick2
 
         // on image click
         // replace flag -> changed to false / true (depending on current state)
@@ -43,19 +43,11 @@ cob.custom.customize.push(function (core, utils, ui) {
         if(replaceFlag)
           show = false;
 
-        function onImageClick(){
-          if(show){
-            const replaceArgMatcher = /\(\[.*replace:false.*\]\)/;
-            const replaceFlag = args && args.match(replaceArgMatcher) && args.match(replaceArgMatcher).length == 1
-            fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";
-            show = false
-          }
-          else{
-            const replaceArgMatcher = /\(\[.*replace:true.*\]\)/;
-            const replaceFlag = args && args.match(replaceArgMatcher) && args.match(replaceArgMatcher).length == 1
-            fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";
-            show = true
-          }
+        function onImageClick2(){
+          const replaceArgMatcher = new RegExp(`\\(\\[.*replace:${show ? 'false' : 'true' }.*\\]\\)`);
+          const replaceFlag = args && args.match(replaceArgMatcher) && args.match(replaceArgMatcher).length == 1
+          fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";
+          show = !show
         }
       }
     });
