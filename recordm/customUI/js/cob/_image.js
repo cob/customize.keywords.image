@@ -21,10 +21,10 @@ cob.custom.customize.push(function (core, utils, ui) {
                       : fp.field.htmlEncodedValue
       if(imgLink) {
 
-        let widthCalc = (width ? 'style="width:' + width + 'px" ' : "")
+        let widthCalc = (width ? ' style="width:' + width + 'px" ' : "")
 
         const $image = $(
-          '<div class="tooltip-hover"'+ widthCalc +'>' +
+          '<div class="dollarImgDiv"'+ widthCalc +'>' +
             '<img ' +
               'src="' + imgLink + '">' +
             "</img>" +
@@ -40,7 +40,7 @@ cob.custom.customize.push(function (core, utils, ui) {
         // hides or shows extra details on click
 
         let show = replaceFlag
-        function onImageClick2(){
+        function onImageClick(){
           fp.content()[0].children[0].style.display = show ? "none" : "";
           show = !show
         }
