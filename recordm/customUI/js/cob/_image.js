@@ -33,7 +33,7 @@ cob.custom.customize.push(function (core, utils, ui) {
         );
         fp.content()[0].append($image[0]);
         fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";
-        $image[0].onclick = onImageClick2
+        $image[0].onclick = onImageClick
 
         // on image click
         // replace flag -> changed to false / true (depending on current state)
