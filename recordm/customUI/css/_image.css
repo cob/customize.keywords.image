@@ -1,4 +1,5 @@
 /* ---- ---- ---- ---- IMG columns (and related) ---- ---- ---- ---- */
+/* ---- ---- for result list ---- ---- */
 .dollarImgCell {
 	text-align: center;;
 }
@@ -12,7 +13,6 @@
 	max-width: 22px;
 }
 
-
 .dollarImgCell .dollarImageDiv .dollarImageImg {
 	display:none
 }
@@ -25,4 +25,29 @@
 	width: 500px;
 	max-width: 40%;
 	max-height: 100%;
+}
+
+/* ---- ---- for instance details ---- ---- */
+:root {
+	--defaultWidth : 250px; /* default size */
+}
+
+div.dollarImgDiv {
+	width: var(--defaultWidth);
+	display: flex;
+}
+
+div.dollarImgDiv span {
+	display: none;
+	position:absolute;
+	bottom: 0;
+	width: var(--defaultWidth);
+	text-align: center;
+	background: #333;
+	color: #fff;
+	font-size: 1em;
+}
+
+div.dollarImgDiv:hover span {
+	display: inline-block;
 }
