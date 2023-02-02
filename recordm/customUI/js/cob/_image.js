@@ -15,35 +15,51 @@ cob.custom.customize.push(function (core, utils, ui) {
       
       const replaceFlag = args && args.match(replaceArgMatcher) && args.match(replaceArgMatcher).length == 1
       const width = args && args.match(widthArgMatcher) && args.match(widthArgMatcher)[1] || "";
-      // ImgLink differs if the field is a $file or a $link 
+      const imgFieldPresenter = fp.content()[0];
+      // ImgLink differs if the field is a $file or a $link ($image supports both)
       const imgLink = fp.field.fieldDefinition.description.match(/[$]file/)
-                      ? $(fp.content()[0]).find(".link-container a")[0] && $(fp.content()[0]).find(".link-container a")[0].href
+                      ? $(imgFieldPresenter).find(".link-container a")[0] && $(imgFieldPresenter).find(".link-container a")[0].href
                       : fp.field.htmlEncodedValue
       if(imgLink) {
+        let showMsg = "Click <b>here</b> to show/hide image details";
 
-        let widthCalc = (width ? ' style="width:' + width + 'px" ' : "")
-
+        switch (core.getLanguage()) {
+          case "pt" : 
+            showMsg = "Clicar <b>aqui</b> para ver/esconder os detalhes"
+            break
+        }
         const $image = $(
-          '<div class="dollarImgDiv"'+ widthCalc +'>' +
-            '<img ' +
-              'src="' + imgLink + '">' +
-            "</img>" +
-            "<span "+ widthCalc +">Click to toggle image details</span>" +
+          '<div class="dollarImgDiv" >' +
+            '<img ' + 'src="' + imgLink + '"></img>' +
+            "<span>"+showMsg+"</span>" +
           "</div>"
         );
-        fp.content()[0].append($image[0]);
-        fp.content()[0].children[0].style.display = replaceFlag ? "none" : "";
-        $image[0].onclick = onImageClick
-
-        // on image click
-        // replace flag -> changed to false / true (depending on current state)
-        // hides or shows extra details on click
-
-        let show = replaceFlag
-        function onImageClick(){
-          fp.content()[0].children[0].style.display = show ? "none" : "";
+        imgFieldPresenter.append($image[0]);
+        
+        let show = !replaceFlag
+        imgFieldPresenter.children[0].style.display = show ? "" : "none";
+        $image.children("span")[0].onclick = () => {
           show = !show
+          imgFieldPresenter.children[0].style.display = show ? "" : "none";
         }
+
+        let zoom = false
+        let widthCalc;
+        if(width) {
+          widthCalc = width
+          document.querySelector(':root').style.setProperty('--defaultWidth', widthCalc + 'px');
+        } else {
+          widthCalc =  document.querySelector(':root').style.getPropertyValue('--defaultWidth')
+        }
+        $image.children("img")[0].onclick = () => {
+          zoom = !zoom;
+          if(zoom) {
+            $image[0].style.setProperty('--defaultWidth', 600 + 'px');
+          } else {
+            $image[0].style.removeProperty('--defaultWidth')
+          }
+        }
+
       }
     });
   });
