@@ -35,6 +35,7 @@
 div.dollarImgDiv {
 	width: var(--defaultWidth);
 	display: flex;
+	position: relative;
 }
 
 div.dollarImgDiv span {
