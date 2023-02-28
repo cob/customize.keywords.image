@@ -10,12 +10,16 @@
 
 .dollarImgCell .dollarImageItem {
 	display:inline-block;
-	max-width: 22px;
 }
 
 .dollarImgCell .dollarImageDiv .dollarImageImg {
 	display:none
 }
+
+.cob-app .dollarImgCell img {
+	height: 22px;
+}
+
 .dollarImgCell .dollarImageDiv:hover .dollarImageImg {
 	display:block;
 	z-index: 999;
@@ -25,6 +29,7 @@
 	width: 500px;
 	max-width: 40%;
 	max-height: 100%;
+	height: unset
 }
 
 /* ---- ---- for instance details ---- ---- */
