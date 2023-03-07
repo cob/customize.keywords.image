@@ -17,7 +17,7 @@
 }
 
 .cob-app .dollarImgCell img {
-	height: 22px;
+	max-height: 22px;
 }
 
 .dollarImgCell .dollarImageDiv:hover .dollarImageImg {
