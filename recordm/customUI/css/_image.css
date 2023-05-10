@@ -4,32 +4,40 @@
 	text-align: center;;
 }
 
-.dollarImageDiv {
+.dollarImageDiv, .dollarPDFdiv {
 	display:inline;
 }
 
-.dollarImgCell .dollarImageItem {
+.dollarImgCell .dollarImageItem{
 	display:inline-block;
 }
 
-.dollarImgCell .dollarImageDiv .dollarImageImg {
-	display:none
+.hdCanvas{
+	display: none;
+	visibility: hidden;
 }
 
-.cob-app .dollarImgCell img {
+.thg{
 	max-height: 22px;
 }
 
-.dollarImgCell .dollarImageDiv:hover .dollarImageImg {
+.shCanvas {
 	display:block;
 	z-index: 999;
 	position: fixed;
 	right: 10px;
 	top: 10px;
 	width: 500px;
-	max-width: 40%;
-	max-height: 100%;
+	max-width: 100%;
 	height: unset
+}
+.dollarCanvasImg{
+	width: 100%;
+	max-height: 50%;
+}
+.canvasp{
+	display: flex;
+	flex-direction: column;
 }
 
 /* ---- ---- for instance details ---- ---- */
@@ -37,10 +45,14 @@
 	--defaultWidth : 250px; /* default size */
 }
 
-div.dollarImgDiv {
+div.dollarImgDiv, .canvas_inst {
 	width: var(--defaultWidth);
 	display: flex;
 	position: relative;
+}
+.g_lft{
+	left: 10px;
+	right: auto;
 }
 
 div.dollarImgDiv span {
