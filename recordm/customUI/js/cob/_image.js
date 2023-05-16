@@ -98,7 +98,14 @@ cob.custom.customize.push(function (core, utils, ui) {
                                     <div class='dollarImageItem'><img src=${pdfURLIcon} class="pdfPreview dollarImgThg" data-hrf=${link}></div>
                                   </div>`
         }else{
-          childNode.innerHTML = "Link"
+          //unknownFileIcon
+          childNode.innerHTML = `<div class="dollarImgPDFdiv">
+                                    <div class='dollarImageItem'>
+                                      <a href='${link}'>
+                                        <img src='localresource/icons/file.png' class="pdfPreview dollarImgThg">
+                                      </a>
+                                    </div>
+                                  </div>`
         }
       }
     }
