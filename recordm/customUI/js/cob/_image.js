@@ -3,14 +3,13 @@ const pdfRegex = /([a-z\-_0-9\/\:\.]*\.(pdf))/
 const imageMatcher = /[$]image(\(.+\))?/;
 const imgRegex = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/
 const fileMatcher = /[$]file/;
-const pdfURLIcon = "localresource/icons/pdf.png"
+const pdfURLIcon = "localresource/icons/pdf3.png"
 //commit and push with gitkraken 5466
 cob.custom.customize.push(function (core, utils, ui) {
 
   core.customizeAllInstances((instance, presenter) => {
     if (instance.isNew() || presenter.isGroupEdit()) return;
-
-    const imagesFPs = presenter.findFieldPs((fp) => fileMatcher.exec( fp.field.fieldDefinition.description ) );
+    const imagesFPs = presenter.findFieldPs((fp) => imageMatcher.exec( fp.field.fieldDefinition.description ) ||  fileMatcher.exec( fp.field.fieldDefinition.description ));
     imagesFPs.forEach((fp) => {
 
       const imgFieldPresenter = fp.content()[0];
@@ -19,10 +18,8 @@ cob.custom.customize.push(function (core, utils, ui) {
                       ? $(imgFieldPresenter).find(".link-container a")[0] && $(imgFieldPresenter).find(".link-container a")[0].href
                       : fp.field.htmlEncodedValue
 
-
-
       if(imgLink && imgLink.match(imgRegex)) {
-        const argsMatch = fp.field.fieldDefinition.description.match(fileMatcher);
+        const argsMatch = fp.field.fieldDefinition.description.match(imageMatcher);
         const args = argsMatch && argsMatch[1]
         
         const replaceArgMatcher = /\(\[.*replace:true.*\]\)/;
@@ -75,28 +72,33 @@ cob.custom.customize.push(function (core, utils, ui) {
     });
   });
 
-
   core.customizeAllColumns("*", function (node, esDoc, fieldInfo) {
     if (imageMatcher.exec(fieldInfo.fieldDefDescription)||fileMatcher.exec(fieldInfo.fieldDefDescription)) {
       node.classList.add("dollarImgCell");
       for(let childNode of node.childNodes) {
-        if(childNode.className == "link") {
-          if( childNode.href.match(imgRegex)) {
-            childNode.innerHTML = "<div class='dollarImageDiv'>"
-                                 +" <div class='dollarImageItem'><img class='thg' src='"+childNode.href+"'></img></div>"
-                                 +" <img class='hdCanvas'loading='lazy' src='"+childNode.href+"'></img>"
-                                 +"</div>"
-            childNode.removeAttribute("href")
-          }else if (childNode.href.match(pdfRegex)) {
-            childNode.innerHTML = `<div class="dollarPDFdiv">
-                                      <div class='dollarImageItem'><img src=${pdfURLIcon} class="pdfPreview thg" data-hrf=${childNode.href}></div>
-                                    </div>`
-            childNode.removeAttribute("href")
-          }else{
-            childNode.innerHTML = "Link"
-          }
-        } else {
-          childNode.textContent = " "
+        let link;
+        if(childNode.tagName == "A" ){
+          link = childNode.href
+          childNode.removeAttribute("href")
+        }else{
+          link = childNode.textContent
+          childNode = document.createElement("a")
+          childNode.className="link"
+          childNode.setAttribute("target","_blank")
+          node.innerHTML=""
+          node.appendChild(childNode)
+        }
+        if( link && link.match(imgRegex)) {
+          childNode.innerHTML = `<div class='dollarImageDiv'>
+                                  <div class='dollarImageItem'><img class='dollarImgThg' src='${link}'  data-hrf='IMG'></img></div>
+                                </div>
+                                `
+        }else if (link && link.match(pdfRegex)) {
+          childNode.innerHTML = `<div class="dollarImgPDFdiv">
+                                    <div class='dollarImageItem'><img src=${pdfURLIcon} class="pdfPreview dollarImgThg" data-hrf=${link}></div>
+                                  </div>`
+        }else{
+          childNode.innerHTML = "Link"
         }
       }
     }
@@ -123,7 +125,7 @@ function pdfPreviewOnInstances(imgFieldPresenter,fileURL) {
 }
 //PDF PREVIEW FOR COLUMNS
 document.onclick=(e)=>{
-  if(e.target.classList.contains("thg")){
+  if(e.target.classList.contains("dollarImgThg")){
     showCanvasHandler(e)
   }else{
     hideAllCanvas(null) 
@@ -131,47 +133,52 @@ document.onclick=(e)=>{
 }
 function controlCanvasPosition(x,canvasDiv) {
   if( x > (window.innerWidth - canvasDiv.clientWidth)){
-    canvasDiv.classList.add("g_lft")
+    canvasDiv.classList.add("dollarImgLft")
   }else{
-    canvasDiv.classList.remove("g_lft")
+    canvasDiv.classList.remove("dollarImgLft")
   }
 }
 function showCanvasHandler(event) {
-  let element = event.target
-  let grandParent = element.parentElement.parentElement
-  let canvasDiv = element.parentElement.nextElementSibling
+  let clickedElement = event.target
+  let grandParent = clickedElement.parentElement.parentElement
+  let canvasDiv = clickedElement.parentElement.nextElementSibling
   if(canvasDiv){
     hideAllCanvas(canvasDiv);
-    canvasDiv.classList.toggle("hdCanvas")
-    canvasDiv.classList.toggle("shCanvas")
+    canvasDiv.classList.toggle("dollarImgHideCanvas")
+    canvasDiv.classList.toggle("showCanvas")
     controlCanvasPosition(event.clientX,canvasDiv)
   }else{
-    let imgURL = element.getAttribute("data-hrf")
-    if(!imgURL){
-      return
+    let imgURL = clickedElement.getAttribute("data-hrf")
+    if (imgURL) {
+      let tagName = "canvas"
+      if (imgURL == "IMG") {
+        imgURL = clickedElement.src
+        tagName = "img"
+      }
+      clickedElement.removeAttribute("data-hrf")
+      let canvasParent = document.createElement("div")
+      let downloadButton = document.createElement("a")
+      downloadButton.textContent = "Download"
+      let canvasOrImg = document.createElement(tagName)
+      canvasOrImg.classList.add("dollarCanvasImg")
+      downloadButton.href = imgURL
+      canvasParent.className = "dollarImgCanvasp"
+      canvasParent.appendChild(canvasOrImg)
+      canvasParent.appendChild(downloadButton)
+      if (tagName == "img") {
+        canvasOrImg.src=imgURL
+        firstClickToShowPreview(canvasOrImg,grandParent,event.clientX)
+      } else {
+        startPDFRendering(canvasOrImg,imgURL, [grandParent, event.clientX])
+      }
     }
-    element.removeAttribute("data-hrf")
-
-    let canvasParent = document.createElement("div")
-    let downloadButton = document.createElement("a")
-    downloadButton.textContent="Download"
-    let canvas = document.createElement("canvas")
-    
-    canvas.classList.add("dollarCanvasImg")
-    downloadButton.href=imgURL
-
-    canvasParent.className="canvasp"
-    canvasParent.appendChild(canvas)
-    canvasParent.appendChild(downloadButton)
-
-    startPDFRendering(canvas, imgURL,[grandParent,event.clientX])
   }
 }
 function hideAllCanvas(currentCanvas) {
-  let canvas = document.getElementsByClassName("shCanvas")
+  let canvas = document.getElementsByClassName("showCanvas")
   for(let child of canvas){
     if(currentCanvas!=child){
-      child.classList.replace("shCanvas","hdCanvas")
+      child.classList.replace("showCanvas","dollarImgHideCanvas")
     }
   }
 }
@@ -184,21 +191,23 @@ function startPDFRendering(canvas, url2,canvasGrandParent) {
     pdf.getPage(pageNumber).then(function (page) {
       var scale = 2;
       var viewport = page.getViewport({ scale: scale });
-
       var renderTask = page.render(getCanvasContex(canvas, viewport));
       renderTask.promise.then(function () {
         if(canvasGrandParent){
-          hideAllCanvas(canvas)
-          canvas.parentElement.classList.remove("hdCanvas")
-          canvas.parentElement.classList.add("shCanvas")
-          canvasGrandParent[0].appendChild(canvas.parentElement)
-          controlCanvasPosition(canvasGrandParent[1],canvas.parentElement)
+          firstClickToShowPreview(canvas,canvasGrandParent[0],canvasGrandParent[1])
         }
       });
     });
   }, function (reason) {
     console.error(reason);
   });
+}
+function firstClickToShowPreview(canvas,grandParent,clientX) {
+  hideAllCanvas(canvas)
+  canvas.parentElement.classList.remove("dollarImgHideCanvas")
+  canvas.parentElement.classList.add("showCanvas")
+  grandParent.appendChild(canvas.parentElement)
+  controlCanvasPosition(clientX,canvas.parentElement)
 }
 
 function getCanvasContex(canvas, viewport) {
