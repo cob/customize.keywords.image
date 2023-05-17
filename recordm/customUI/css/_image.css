@@ -59,6 +59,7 @@ div.dollarImgDiv, .dollarImgCanvas_inst {
 	display: flex;
 	position: relative;
 	background-color: #AAA2;
+	max-width: 100%;
 }
 div.dollarImgDiv img, .dollarImgCanvas_inst img {
 	width: 100%;
