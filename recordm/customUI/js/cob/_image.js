@@ -9,7 +9,7 @@ cob.custom.customize.push(function (core, utils, ui) {
 
   core.customizeAllInstances((instance, presenter) => {
     if (instance.isNew() || presenter.isGroupEdit()) return;
-    const imagesFPs = presenter.findFieldPs((fp) => imageMatcher.exec( fp.field.fieldDefinition.description ) || fileMatcher.exec( fp.field.fieldDefinition.description ));
+    const imagesFPs = presenter.findFieldPs((fp) => imageMatcher.exec( fp.field.fieldDefinition.description ));
     imagesFPs.forEach((fp) => {
 
       const imgFieldPresenter = fp.content()[0];
@@ -73,7 +73,7 @@ cob.custom.customize.push(function (core, utils, ui) {
   });
 
   core.customizeAllColumns("*", function (node, esDoc, fieldInfo) {
-    if (imageMatcher.exec(fieldInfo.fieldDefDescription)||fileMatcher.exec(fieldInfo.fieldDefDescription)) {
+    if (imageMatcher.exec(fieldInfo.fieldDefDescription)) {
       node.classList.add("dollarImgCell");
       for(let childNode of node.childNodes) {
         let link;
