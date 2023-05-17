@@ -84,10 +84,10 @@ cob.custom.customize.push(function (core, utils, ui) {
           link = childNode.textContent
           childNode = document.createElement("a")
           childNode.className="link"
-          childNode.setAttribute("target","_blank")
           node.innerHTML=""
           node.appendChild(childNode)
         }
+        childNode.setAttribute("target","_blank")
         if( link && link.match(imgRegex)) {
           childNode.innerHTML = `<div class='dollarImageDiv'>
                                   <div class='dollarImageItem'><img class='dollarImgThg' src='${link}'  data-hrf='IMG'></img></div>
@@ -101,7 +101,7 @@ cob.custom.customize.push(function (core, utils, ui) {
           //unknownFileIcon
           childNode.innerHTML = `<div class="dollarImgPDFdiv">
                                     <div class='dollarImageItem'>
-                                      <a href='${link}'>
+                                      <a href='${link}' target='_blank'>
                                         <img src='localresource/icons/FileIcon.png' class="pdfPreview dollarImgThg">
                                       </a>
                                     </div>
@@ -166,9 +166,10 @@ function showCanvasHandler(event) {
       let canvasParent = document.createElement("div")
       let downloadButton = document.createElement("a")
       downloadButton.textContent = "Download"
+      downloadButton.href = imgURL
+      downloadButton.target="_blank"
       let canvasOrImg = document.createElement(tagName)
       canvasOrImg.classList.add("dollarImgCanvas")
-      downloadButton.href = imgURL
       canvasParent.className = "dollarImgCanvasp"
       canvasParent.appendChild(canvasOrImg)
       canvasParent.appendChild(downloadButton)

@@ -37,9 +37,8 @@
 	height: unset;
 	background-color: #AAAA;
 }
-.dollarImgShowCanvas a {
+.dollarImgShowCanvas a{
 	font-size: 15px;
-	text-transform: uppercase;
 }
 .dollarImgCanvas {
 	width: 100%;
