@@ -18,7 +18,7 @@ cob.custom.customize.push(function (core, utils, ui) {
                       ? $(imgFieldPresenter).find(".link-container a")[0] && $(imgFieldPresenter).find(".link-container a")[0].href
                       : fp.field.htmlEncodedValue
 
-      if(imgLink && imgLink.match(imgRegex)) {
+      if (imgLink && imgLink.match(imgRegex)) {
         const argsMatch = fp.field.fieldDefinition.description.match(imageMatcher);
         const args = argsMatch && argsMatch[1]
         
@@ -52,7 +52,7 @@ cob.custom.customize.push(function (core, utils, ui) {
 
         let zoom = false
         let widthCalc;
-        if(width) {
+        if (width) {
           widthCalc = width
           document.querySelector(':root').style.setProperty('--defaultWidth', widthCalc + 'px');
         } else {
@@ -60,13 +60,13 @@ cob.custom.customize.push(function (core, utils, ui) {
         }
         $image.children("img")[0].onclick = () => {
           zoom = !zoom;
-          if(zoom) {
+          if (zoom) {
             $image[0].style.setProperty('--defaultWidth', 600 + 'px');
           } else {
             $image[0].style.removeProperty('--defaultWidth')
           }
         }
-      }else if(imgLink && imgLink.match(pdfRegex)){
+      } else if (imgLink && imgLink.match(pdfRegex)) {
         pdfPreviewOnInstances(imgFieldPresenter,imgLink)
       }
     });
@@ -77,27 +77,27 @@ cob.custom.customize.push(function (core, utils, ui) {
       node.classList.add("dollarImgCell");
       for(let childNode of node.childNodes) {
         let link;
-        if(childNode.tagName == "A" ){
+        if (childNode.tagName == "A") {
           link = childNode.href
           childNode.removeAttribute("href")
-        }else{
+        } else {
           link = childNode.textContent
           childNode = document.createElement("a")
           childNode.className="link"
           node.innerHTML=""
           node.appendChild(childNode)
         }
-        childNode.setAttribute("target","_blank")
-        if( link && link.match(imgRegex)) {
+        childNode.setAttribute("target", "_blank")
+        if (link && link.match(imgRegex)) {
           childNode.innerHTML = `<div class='dollarImageDiv'>
                                   <div class='dollarImageItem'><img class='dollarImgThg' src='${link}'  data-hrf='IMG'></img></div>
                                 </div>
                                 `
-        }else if (link && link.match(pdfRegex)) {
+        } else if (link && link.match(pdfRegex)) {
           childNode.innerHTML = `<div class="dollarImgPDFdiv">
                                     <div class='dollarImageItem'><img src=${pdfURLIcon} class="pdfPreview dollarImgThg" data-hrf=${link}></div>
                                   </div>`
-        }else{
+        } else {
           //unknownFileIcon
           childNode.innerHTML = `<div class="dollarImgPDFdiv">
                                     <div class='dollarImageItem'>
@@ -132,16 +132,16 @@ function pdfPreviewOnInstances(imgFieldPresenter,fileURL) {
 }
 //PDF PREVIEW FOR COLUMNS
 document.onclick=(e)=>{
-  if(e.target.classList.contains("dollarImgThg")){
+  if (e.target.classList.contains("dollarImgThg")) {
     showCanvasHandler(e)
   }else{
     hideAllCanvas(null) 
   }
 }
 function controlCanvasPosition(x,canvasDiv) {
-  if( x > (window.innerWidth - canvasDiv.clientWidth)){
+  if (x > (window.innerWidth - canvasDiv.clientWidth)) {
     canvasDiv.classList.add("dollarImgLft")
-  }else{
+  } else {
     canvasDiv.classList.remove("dollarImgLft")
   }
 }
@@ -149,12 +149,12 @@ function showCanvasHandler(event) {
   let clickedElement = event.target
   let grandParent = clickedElement.parentElement.parentElement
   let canvasDiv = clickedElement.parentElement.nextElementSibling
-  if(canvasDiv){
+  if (canvasDiv) {
     hideAllCanvas(canvasDiv);
     canvasDiv.classList.toggle("dollarImgHideCanvas")
     canvasDiv.classList.toggle("dollarImgShowCanvas")
     controlCanvasPosition(event.clientX,canvasDiv)
-  }else{
+  } else {
     let imgURL = clickedElement.getAttribute("data-hrf")
     if (imgURL) {
       let tagName = "canvas"
@@ -184,8 +184,8 @@ function showCanvasHandler(event) {
 }
 function hideAllCanvas(currentCanvas) {
   let canvas = document.getElementsByClassName("dollarImgShowCanvas")
-  for(let child of canvas){
-    if(currentCanvas!=child){
+  for (let child of canvas) {
+    if (currentCanvas != child) {
       child.classList.replace("dollarImgShowCanvas","dollarImgHideCanvas")
     }
   }
@@ -200,7 +200,7 @@ function startPDFRendering(canvas, url2,canvasGrandParent) {
       var viewport = page.getViewport({ scale: 2 });
       var renderTask = page.render(getCanvasContex(canvas, viewport));
       renderTask.promise.then(function () {
-        if(canvasGrandParent){
+        if (canvasGrandParent) {
           firstClickToShowPreview(canvas,canvasGrandParent[0],canvasGrandParent[1])
         }
       });
