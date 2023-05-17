@@ -9,12 +9,12 @@ cob.custom.customize.push(function (core, utils, ui) {
 
   core.customizeAllInstances((instance, presenter) => {
     if (instance.isNew() || presenter.isGroupEdit()) return;
-    const imagesFPs = presenter.findFieldPs((fp) => imageMatcher.exec( fp.field.fieldDefinition.description ) ||  fileMatcher.exec( fp.field.fieldDefinition.description ));
+    const imagesFPs = presenter.findFieldPs((fp) => imageMatcher.exec( fp.field.fieldDefinition.description ) || fileMatcher.exec( fp.field.fieldDefinition.description ));
     imagesFPs.forEach((fp) => {
 
       const imgFieldPresenter = fp.content()[0];
       // ImgLink differs if the field is a $file or a $link ($image supports both)
-      const imgLink = fp.field.fieldDefinition.description.match(/[$]file/)
+      const imgLink = fp.field.fieldDefinition.description.match(fileMatcher)
                       ? $(imgFieldPresenter).find(".link-container a")[0] && $(imgFieldPresenter).find(".link-container a")[0].href
                       : fp.field.htmlEncodedValue
 
@@ -102,7 +102,7 @@ cob.custom.customize.push(function (core, utils, ui) {
           childNode.innerHTML = `<div class="dollarImgPDFdiv">
                                     <div class='dollarImageItem'>
                                       <a href='${link}'>
-                                        <img src='localresource/icons/file.png' class="pdfPreview dollarImgThg">
+                                        <img src='localresource/icons/FileIcon.png' class="pdfPreview dollarImgThg">
                                       </a>
                                     </div>
                                   </div>`
@@ -115,7 +115,7 @@ function pdfPreviewOnInstances(imgFieldPresenter,fileURL) {
   let divParent = document.createElement("div");
   divParent.className = "dollarImgDiv"
   let pdfCanvas = document.createElement("canvas");
-  pdfCanvas.className = "canvas_inst"
+  pdfCanvas.className = "dollarImgCanvas_inst"
   divParent.appendChild(pdfCanvas)
   imgFieldPresenter.append(divParent);
 
@@ -152,7 +152,7 @@ function showCanvasHandler(event) {
   if(canvasDiv){
     hideAllCanvas(canvasDiv);
     canvasDiv.classList.toggle("dollarImgHideCanvas")
-    canvasDiv.classList.toggle("showCanvas")
+    canvasDiv.classList.toggle("dollarImgShowCanvas")
     controlCanvasPosition(event.clientX,canvasDiv)
   }else{
     let imgURL = clickedElement.getAttribute("data-hrf")
@@ -167,7 +167,7 @@ function showCanvasHandler(event) {
       let downloadButton = document.createElement("a")
       downloadButton.textContent = "Download"
       let canvasOrImg = document.createElement(tagName)
-      canvasOrImg.classList.add("dollarCanvasImg")
+      canvasOrImg.classList.add("dollarImgCanvas")
       downloadButton.href = imgURL
       canvasParent.className = "dollarImgCanvasp"
       canvasParent.appendChild(canvasOrImg)
@@ -182,10 +182,10 @@ function showCanvasHandler(event) {
   }
 }
 function hideAllCanvas(currentCanvas) {
-  let canvas = document.getElementsByClassName("showCanvas")
+  let canvas = document.getElementsByClassName("dollarImgShowCanvas")
   for(let child of canvas){
     if(currentCanvas!=child){
-      child.classList.replace("showCanvas","dollarImgHideCanvas")
+      child.classList.replace("dollarImgShowCanvas","dollarImgHideCanvas")
     }
   }
 }
@@ -196,8 +196,7 @@ function startPDFRendering(canvas, url2,canvasGrandParent) {
   loadingTask.promise.then(function (pdf) {
     var pageNumber = 1;
     pdf.getPage(pageNumber).then(function (page) {
-      var scale = 2;
-      var viewport = page.getViewport({ scale: scale });
+      var viewport = page.getViewport({ scale: 2 });
       var renderTask = page.render(getCanvasContex(canvas, viewport));
       renderTask.promise.then(function () {
         if(canvasGrandParent){
@@ -212,7 +211,7 @@ function startPDFRendering(canvas, url2,canvasGrandParent) {
 function firstClickToShowPreview(canvas,grandParent,clientX) {
   hideAllCanvas(canvas)
   canvas.parentElement.classList.remove("dollarImgHideCanvas")
-  canvas.parentElement.classList.add("showCanvas")
+  canvas.parentElement.classList.add("dollarImgShowCanvas")
   grandParent.appendChild(canvas.parentElement)
   controlCanvasPosition(clientX,canvas.parentElement)
 }
