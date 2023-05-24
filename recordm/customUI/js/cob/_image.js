@@ -4,7 +4,7 @@ const imageMatcher = /[$]image(\(.+\))?/;
 const imgRegex = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/i
 const fileMatcher = /[$]file/;
 const pdfURLIcon = "localresource/icons/pdf3.png"
-//commit and push with gitkraken 5466
+
 cob.custom.customize.push(function (core, utils, ui) {
 
   core.customizeAllInstances((instance, presenter) => {
@@ -71,21 +71,25 @@ cob.custom.customize.push(function (core, utils, ui) {
       }
     });
   });
-
   core.customizeAllColumns("*", function (node, esDoc, fieldInfo) {
     if (imageMatcher.exec(fieldInfo.fieldDefDescription)) {
       node.classList.add("dollarImgCell");
+      
       for(let childNode of node.childNodes) {
         let link;
         if (childNode.tagName == "A") {
           link = childNode.href
           childNode.removeAttribute("href")
-        } else {
+        } else if(", "!=childNode.textContent){
           link = childNode.textContent
           childNode = document.createElement("a")
           childNode.className="link"
           node.innerHTML=""
+          node.textContent=""
           node.appendChild(childNode)
+        }else{
+          childNode.textContent=""
+          continue
         }
         childNode.setAttribute("target", "_blank")
         if (link && link.match(imgRegex)) {

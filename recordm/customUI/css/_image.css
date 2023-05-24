@@ -1,11 +1,17 @@
 /* ---- ---- ---- ---- IMG columns (and related) ---- ---- ---- ---- */
 /* ---- ---- for result list ---- ---- */
 .dollarImgCell {
-	text-align: center;;
+	display: flex;
+	justify-content:center;
+}
+.dollarImgCellTxt{
+	text-align: center;
 }
 
 .dollarImageDiv, .dollarImgPDFdiv {
-	display:inline;
+	display:inline-block;
+	max-width: 22px;
+	padding: 0 2px;
 }
 
 .dollarImgCell .dollarImageItem {
@@ -18,7 +24,8 @@
 }
 
 .dollarImageDiv .dollarImgThg {
-	max-height: 22px;
+	max-height: 18px;
+	max-width: unset;
 }
 .dollarImgPDFdiv .dollarImgThg{
 	max-height: 16px;
@@ -32,12 +39,14 @@
 	position: fixed;
 	right: 10px;
 	top: 10px;
-	width: 500px;
+	width: 800px;
 	max-width: 100%;
 	height: unset;
 	background-color: #AAAA;
 }
 .dollarImgShowCanvas a{
+	display: inline-block;
+	text-align: center;
 	font-size: 15px;
 	background-color: #f7f6f3;
 	border: 1px solid #000;
