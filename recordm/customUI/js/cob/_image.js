@@ -1,7 +1,7 @@
 //------------------ $image  ------------------------
-const pdfRegex = /([a-z\-_0-9\/\:\.]*\.(pdf))/
+const pdfRegex = /([a-z\-_0-9\/\:\.]*\.(pdf))/i
 const imageMatcher = /[$]image(\(.+\))?/;
-const imgRegex = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/
+const imgRegex = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/i
 const fileMatcher = /[$]file/;
 const pdfURLIcon = "localresource/icons/pdf3.png"
 //commit and push with gitkraken 5466
