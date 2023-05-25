@@ -94,4 +94,5 @@ div.dollarImgDiv span {
 
 div.dollarImgDiv:hover span {
 	display: inline-block;
+	cursor: pointer;
 }

@@ -17,57 +17,35 @@ cob.custom.customize.push(function (core, utils, ui) {
       const imgLink = fp.field.fieldDefinition.description.match(fileMatcher)
                       ? $(imgFieldPresenter).find(".link-container a")[0] && $(imgFieldPresenter).find(".link-container a")[0].href
                       : fp.field.htmlEncodedValue
-
-      if (imgLink && imgLink.match(imgRegex)) {
+      if (imgLink) {
         const argsMatch = fp.field.fieldDefinition.description.match(imageMatcher);
         const args = argsMatch && argsMatch[1]
         
         const replaceArgMatcher = /\(\[.*replace:true.*\]\)/;
         const widthArgMatcher = /\(\[.*width:(\d+).*\]\)/;
-        
+
         const replaceFlag = args && args.match(replaceArgMatcher) && args.match(replaceArgMatcher).length == 1
         const width = args && args.match(widthArgMatcher) && args.match(widthArgMatcher)[1] || "";
-        
-        let showMsg = "Click <b>here</b> to show/hide image details";
 
+        let showMsg = "Click <b>here</b> to show/hide image details";
         switch (core.getLanguage()) {
           case "pt" : 
             showMsg = "Clicar <b>aqui</b> para ver/esconder os detalhes"
             break
         }
-        const $image = $(
-          '<div class="dollarImgDiv" >' +
-            '<img ' + 'src="' + imgLink + '"></img>' +
-            "<span>"+showMsg+"</span>" +
-          "</div>"
-        );
-        imgFieldPresenter.append($image[0]);
         
-        let show = !replaceFlag
-        imgFieldPresenter.children[0].style.display = show ? "" : "none";
-        $image.children("span")[0].onclick = () => {
-          show = !show
-          imgFieldPresenter.children[0].style.display = show ? "" : "none";
+        if(imgLink.match(imgRegex)){
+          const $image = $(
+            '<div class="dollarImgDiv" >' +
+              '<img ' + 'src="' + imgLink + '"></img>' +
+              "<span>"+showMsg+"</span>" +
+            "</div>"
+          );
+          imgFieldPresenter.append($image[0]);
+          applyArgs($image.children("span")[0],imgFieldPresenter,replaceFlag,width)
+        }else if(imgLink.match(pdfRegex)){
+          pdfPreviewOnInstances(imgFieldPresenter,imgLink,showMsg,replaceFlag)
         }
-
-        let zoom = false
-        let widthCalc;
-        if (width) {
-          widthCalc = width
-          document.querySelector(':root').style.setProperty('--defaultWidth', widthCalc + 'px');
-        } else {
-          widthCalc =  document.querySelector(':root').style.getPropertyValue('--defaultWidth')
-        }
-        $image.children("img")[0].onclick = () => {
-          zoom = !zoom;
-          if (zoom) {
-            $image[0].style.setProperty('--defaultWidth', 600 + 'px');
-          } else {
-            $image[0].style.removeProperty('--defaultWidth')
-          }
-        }
-      } else if (imgLink && imgLink.match(pdfRegex)) {
-        pdfPreviewOnInstances(imgFieldPresenter,imgLink)
       }
     });
   });
@@ -115,23 +93,40 @@ cob.custom.customize.push(function (core, utils, ui) {
     }
   });
 })
-function pdfPreviewOnInstances(imgFieldPresenter,fileURL) {
-  let divParent = document.createElement("div");
-  divParent.className = "dollarImgDiv"
-  let pdfCanvas = document.createElement("canvas");
-  pdfCanvas.className = "dollarImgCanvas_inst"
-  divParent.appendChild(pdfCanvas)
-  imgFieldPresenter.append(divParent);
-
+function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
+  let widthCalc;
+  if (width) {
+    widthCalc = width+'px'
+    span.parentElement.style.setProperty('--defaultWidth', widthCalc);
+  }else{
+    widthCalc = window.getComputedStyle(document.querySelector(':root')).getPropertyValue('--defaultWidth')
+  }
   let zoom = false
-  pdfCanvas.onclick = () => {
+  span.parentElement.firstChild.onclick = () => {
     zoom = !zoom;
     if (zoom) {
-      divParent.style.setProperty('--defaultWidth', 600 + 'px');
+      span.parentElement.style.setProperty('--defaultWidth', 600 + 'px');
     } else {
-      divParent.style.removeProperty('--defaultWidth')
+      span.parentElement.style.setProperty('--defaultWidth', widthCalc);
     }
   }
+  let show = !replaceFlag
+  imgFieldPresenter.children[0].style.display = show ? "" : "none";
+  span.onclick = () => {
+    show = !show
+    imgFieldPresenter.children[0].style.display = show ? "" : "none";
+  }
+}
+function pdfPreviewOnInstances(imgFieldPresenter,fileURL,showMsg,replaceFlag) {
+  const $image = $(
+    '<div class="dollarImgDiv" >' +
+      '<canvas class="dollarImgCanvas_inst"></canvas>' +
+      "<span>"+showMsg+"</span>" +
+    "</div>"
+  );
+  imgFieldPresenter.append($image[0]);
+  let pdfCanvas = $image.children("canvas")[0]
+  applyArgs($image.children("span")[0],imgFieldPresenter,replaceFlag)
   startPDFRendering(pdfCanvas, fileURL, null);
 }
 //PDF PREVIEW FOR COLUMNS
