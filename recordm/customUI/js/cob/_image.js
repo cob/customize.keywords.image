@@ -170,8 +170,8 @@ function showCanvasHandler(event) {
       let canvasOrImg = document.createElement(tagName)
       canvasOrImg.classList.add("dollarImgCanvas")
       canvasParent.className = "dollarImgCanvasp"
-      canvasParent.appendChild(canvasOrImg)
       canvasParent.appendChild(downloadButton)
+      canvasParent.appendChild(canvasOrImg)
       if (tagName == "img") {
         canvasOrImg.src=imgURL
         firstClickToShowPreview(canvasOrImg,grandParent,event.clientX)
