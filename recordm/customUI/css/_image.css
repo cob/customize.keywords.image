@@ -19,8 +19,7 @@
 }
 
 .dollarImgHideCanvas {
-	display: none;
-	visibility: hidden;
+	display: none !important;
 }
 
 .dollarImageDiv .dollarImgThg {
