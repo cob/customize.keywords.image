@@ -42,13 +42,14 @@
 	max-width: 100%;
 	height: unset;
 	background-color: #AAAA;
+	border: 1px solid #AAAA;
 }
 .dollarImgShowCanvas a{
 	display: inline-block;
 	text-align: center;
 	font-size: 15px;
 	background-color: #f7f6f3;
-	border: 1px solid #000;
+	border-bottom: 1px solid #000;
 }
 .dollarImgCanvas {
 	width: 100%;
