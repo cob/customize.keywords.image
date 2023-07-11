@@ -144,15 +144,25 @@ function controlCanvasPosition(x,canvasDiv) {
     canvasDiv.classList.remove("dollarImgLft")
   }
 }
+function calcCanvasParentHeight(canvasParent,canvas){
+  let h = window.innerHeight*0.94
+  if(h>canvas.clientHeight){
+    h = canvas.clientHeight;
+  }
+  canvasParent.style.height = `${h}px`
+}
 function showCanvasHandler(event) {
   let clickedElement = event.target
-  let grandParent = clickedElement.parentElement.parentElement
   let canvasDiv = clickedElement.parentElement.nextElementSibling
   if (canvasDiv) {
     hideAllCanvas(canvasDiv);
     canvasDiv.classList.toggle("dollarImgHideCanvas")
     canvasDiv.classList.toggle("dollarImgShowCanvas")
+    
     controlCanvasPosition(event.clientX,canvasDiv)
+    if(canvasDiv.classList.contains("dollarImgShowCanvas")){
+      canvasDiv.style.height=`${calcCanvasParentHeight(canvasDiv,canvasDiv.children[1])}px`
+    }
   } else {
     let imgURL = clickedElement.getAttribute("data-hrf")
     if (imgURL) {
@@ -172,6 +182,7 @@ function showCanvasHandler(event) {
       canvasParent.className = "dollarImgCanvasp"
       canvasParent.appendChild(downloadButton)
       canvasParent.appendChild(canvasOrImg)
+      let grandParent = clickedElement.parentElement.parentElement
       if (tagName == "img") {
         canvasOrImg.src=imgURL
         firstClickToShowPreview(canvasOrImg,grandParent,event.clientX)
@@ -212,8 +223,10 @@ function firstClickToShowPreview(canvas,grandParent,clientX) {
   hideAllCanvas(canvas)
   canvas.parentElement.classList.remove("dollarImgHideCanvas")
   canvas.parentElement.classList.add("dollarImgShowCanvas")
+
   grandParent.appendChild(canvas.parentElement)
   controlCanvasPosition(clientX,canvas.parentElement)
+  canvas.parentElement.style.height=`${calcCanvasParentHeight(canvas.parentElement,canvas)}px`
 }
 
 function getCanvasContex(canvas, viewport) {
