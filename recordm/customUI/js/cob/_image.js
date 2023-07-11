@@ -146,10 +146,9 @@ function controlCanvasPosition(x,canvasDiv) {
 }
 function calcCanvasParentHeight(canvasParent,canvas){
   let h = window.innerHeight*0.94
-  if(h>canvas.clientHeight){
-    h = canvas.clientHeight;
+  if(h<canvas.clientHeight){
+    canvasParent.style.height = `${h}px`
   }
-  canvasParent.style.height = `${h}px`
 }
 function showCanvasHandler(event) {
   let clickedElement = event.target
