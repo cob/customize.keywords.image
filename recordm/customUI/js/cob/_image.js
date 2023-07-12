@@ -148,6 +148,8 @@ function calcCanvasParentHeight(canvasParent,canvas){
   let h = window.innerHeight*0.94
   if(h<canvas.clientHeight){
     canvasParent.style.height = `${h}px`
+  }else{
+    canvasParent.style.height = `unset`
   }
 }
 function showCanvasHandler(event) {
