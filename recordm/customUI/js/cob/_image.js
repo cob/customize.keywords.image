@@ -137,6 +137,15 @@ document.onclick=(e)=>{
     hideAllCanvas(null) 
   }
 }
+function optimizedResizeHandlerWrapper(){
+  addEventListener("resize", (event) => {
+    let canvas = document.getElementsByClassName("dollarImgShowCanvas")
+      if(canvas && canvas[0]){
+        calcCanvasParentHeight(canvas[0],canvas[0].children[1]);
+      }
+  });
+}
+optimizedResizeHandlerWrapper();
 function controlCanvasPosition(x,canvasDiv) {
   if (x > (window.innerWidth - canvasDiv.clientWidth)) {
     canvasDiv.classList.add("dollarImgLft")
@@ -145,7 +154,7 @@ function controlCanvasPosition(x,canvasDiv) {
   }
 }
 function calcCanvasParentHeight(canvasParent,canvas){
-  let h = window.innerHeight*0.94
+  let h = window.innerHeight*0.95
   if(h<canvas.clientHeight){
     canvasParent.style.height = `${h}px`
   }else{
