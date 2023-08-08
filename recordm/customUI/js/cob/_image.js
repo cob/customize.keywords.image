@@ -3,6 +3,9 @@ const pdfRegex = /([a-z\-_0-9\/\:\.]*\.(pdf))/i
 const imageMatcher = /[$]image(\(.+\))?/;
 const imgRegex = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/i
 const fileMatcher = /[$]file/;
+const drawMatcher = /[$]draw/;
+const readOnlyMatcher = /[$]readonly/;
+
 const pdfURLIcon = "localresource/icons/pdf3.png"
 
 cob.custom.customize.push(function (core, utils, ui) {
@@ -14,6 +17,9 @@ cob.custom.customize.push(function (core, utils, ui) {
 
       const imgFieldPresenter = fp.content()[0];
       // ImgLink differs if the field is a $file or a $link ($image supports both)
+      if(fp.field.fieldDefinition.description.match(drawMatcher) && !fp.field.fieldDefinition.description.match(readOnlyMatcher)){
+        return;
+      }
       const imgLink = fp.field.fieldDefinition.description.match(fileMatcher)
                       ? $(imgFieldPresenter).find(".link-container a")[0] && $(imgFieldPresenter).find(".link-container a")[0].href
                       : fp.field.htmlEncodedValue
