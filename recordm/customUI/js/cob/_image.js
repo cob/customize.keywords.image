@@ -55,8 +55,14 @@ cob.custom.customize.push(function (core, utils, ui) {
       }
     });
   });
+  let runOnce = true
   core.customizeAllColumns("*", function (node, esDoc, fieldInfo) {
     if (imageMatcher.exec(fieldInfo.fieldDefDescription)) {
+      //PDF PREVIEW FOR COLUMNS
+      if(runOnce){
+        pdfPreviewDocumentOnclickHandler()
+        runOnce = false
+      }
       node.classList.add("dollarImgCell");
       
       for(let childNode of node.childNodes) {
@@ -99,6 +105,26 @@ cob.custom.customize.push(function (core, utils, ui) {
     }
   });
 })
+function pdfPreviewDocumentOnclickHandler() {
+  let aux = document.onclick
+  if(aux)
+  {
+    document.onclick=(e)=>{
+      handleShowHidePDFPreview(e)
+      aux(e)
+    }
+  } else if (!aux)
+  {
+    document.onclick=handleShowHidePDFPreview
+  }
+}
+function handleShowHidePDFPreview(e) {
+  if (e.target.classList.contains("dollarImgThg")) {
+    showCanvasHandler(e)
+  }else{
+    hideAllCanvas(null) 
+  }
+}
 function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
   let widthCalc;
   if (width) {
@@ -135,14 +161,7 @@ function pdfPreviewOnInstances(imgFieldPresenter,fileURL,showMsg,replaceFlag) {
   applyArgs($image.children("span")[0],imgFieldPresenter,replaceFlag)
   startPDFRendering(pdfCanvas, fileURL, null);
 }
-//PDF PREVIEW FOR COLUMNS
-document.onclick=(e)=>{
-  if (e.target.classList.contains("dollarImgThg")) {
-    showCanvasHandler(e)
-  }else{
-    hideAllCanvas(null) 
-  }
-}
+
 function optimizedResizeHandlerWrapper(){
   addEventListener("resize", (event) => {
     let canvas = document.getElementsByClassName("dollarImgShowCanvas")
@@ -177,7 +196,7 @@ function showCanvasHandler(event) {
     
     controlCanvasPosition(event.clientX,canvasDiv)
     if(canvasDiv.classList.contains("dollarImgShowCanvas")){
-      canvasDiv.style.height=`${calcCanvasParentHeight(canvasDiv,canvasDiv.children[1])}px`
+      calcCanvasParentHeight(canvasDiv,canvasDiv.children[1])
     }
   } else {
     let imgURL = clickedElement.getAttribute("data-hrf")
@@ -242,7 +261,7 @@ function firstClickToShowPreview(canvas,grandParent,clientX) {
 
   grandParent.appendChild(canvas.parentElement)
   controlCanvasPosition(clientX,canvas.parentElement)
-  canvas.parentElement.style.height=`${calcCanvasParentHeight(canvas.parentElement,canvas)}px`
+  calcCanvasParentHeight(canvas.parentElement,canvas)
 }
 
 function getCanvasContex(canvas, viewport) {
