@@ -9,7 +9,8 @@
 }
 
 .dollarImageDiv, .dollarImgPDFdiv {
-	display:inline-block;
+	display:flex;
+	align-items: center;
 	max-width: 22px;
 	padding: 0 2px;
 }

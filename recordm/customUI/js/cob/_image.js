@@ -81,6 +81,8 @@ cob.custom.customize.push(function (core, utils, ui) {
           childNode.textContent=""
           continue
         }
+        childNode.classList.add("flex")
+
         childNode.setAttribute("target", "_blank")
         if (link && link.match(imgRegex)) {
           childNode.innerHTML = `<div class='dollarImageDiv'>
@@ -214,7 +216,7 @@ function showCanvasHandler(event) {
       downloadButton.target="_blank"
       let canvasOrImg = document.createElement(tagName)
       canvasOrImg.classList.add("dollarImgCanvas")
-      canvasParent.className = "transition-opacity duration-700 dollarImgCanvasp"
+      canvasParent.className = "transition-opacity duration-200 dollarImgCanvasp"
       canvasParent.appendChild(downloadButton)
       canvasParent.appendChild(canvasOrImg)
       let grandParent = clickedElement.parentElement.parentElement
