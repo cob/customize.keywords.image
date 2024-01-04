@@ -214,7 +214,7 @@ function showCanvasHandler(event) {
       downloadButton.target="_blank"
       let canvasOrImg = document.createElement(tagName)
       canvasOrImg.classList.add("dollarImgCanvas")
-      canvasParent.className = "dollarImgCanvasp"
+      canvasParent.className = "transition-opacity duration-700 dollarImgCanvasp"
       canvasParent.appendChild(downloadButton)
       canvasParent.appendChild(canvasOrImg)
       let grandParent = clickedElement.parentElement.parentElement
