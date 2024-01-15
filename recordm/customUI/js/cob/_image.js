@@ -187,16 +187,6 @@ function calcCanvasParentHeight(canvasParent,canvas){
   }else{
     canvasParent.style.height = `unset`
   }
-  calcCanvasParentWidth(canvasParent,canvas)
-}
-
-function calcCanvasParentWidth(canvasParent,canvas){
-  let h = window.innerWidth*0.95
-  if(h<canvas.clientWidth){
-    canvasParent.style.width = `${h}px`
-  }else{
-    canvasParent.style.width = `unset`
-  }
 }
 
 function showCanvasHandler(event) {
