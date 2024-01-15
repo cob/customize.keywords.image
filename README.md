@@ -1,4 +1,5 @@
-**# customize.keywords.image
+## customize.keywords.image
+
 This customization will enable images and pdf files to have their
 previews displayed on the frontend
 
