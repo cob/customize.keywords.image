@@ -65,6 +65,7 @@ cob.custom.customize.push(function (core, utils, ui) {
       }
       node.classList.add("dollarImgCell");
       
+      let numFiles = 0
       for(let childNode of node.childNodes) {
         let link;
         if (childNode.tagName == "A") {
@@ -81,24 +82,30 @@ cob.custom.customize.push(function (core, utils, ui) {
           childNode.textContent=""
           continue
         }
+        let fileName = esDoc.ficheiro[numFiles]
+        numFiles++
         childNode.classList.add("flex")
 
         childNode.setAttribute("target", "_blank")
         if (link && link.match(imgRegex)) {
           childNode.innerHTML = `<div class='dollarImageDiv'>
-                                  <div class='dollarImageItem'><img class='dollarImgThg' src='${link}'  data-hrf='IMG'></img></div>
+                                  <div class='dollarImageItem'>
+                                    <img class='dollarImgThg' src='${link}'  data-hrf='IMG' data-filename='${fileName}'></img>
+                                  </div>
                                 </div>
                                 `
         } else if (link && link.match(pdfRegex)) {
           childNode.innerHTML = `<div class="dollarImgPDFdiv">
-                                    <div class='dollarImageItem'><img src=${pdfURLIcon} class="pdfPreview dollarImgThg" data-hrf=${link}></div>
+                                    <div class='dollarImageItem'>
+                                      <img src=${pdfURLIcon} class="pdfPreview dollarImgThg" data-hrf=${link} data-filename='${fileName}'>
+                                    </div>
                                   </div>`
         } else {
           //unknownFileIcon
           childNode.innerHTML = `<div class="dollarImgPDFdiv">
                                     <div class='dollarImageItem'>
                                       <a href='${link}' target='_blank'>
-                                        <img src='localresource/icons/FileIcon.png' class="pdfPreview dollarImgThg">
+                                        <img src='localresource/icons/FileIcon.png' class="pdfPreview dollarImgThg" data-filename='${fileName}'>
                                       </a>
                                     </div>
                                   </div>`
@@ -212,7 +219,7 @@ function showCanvasHandler(event) {
       clickedElement.removeAttribute("data-hrf")
       let canvasParent = document.createElement("div")
       let downloadButton = document.createElement("a")
-      downloadButton.textContent = "Download"
+      downloadButton.textContent = `Download - ${clickedElement.dataset.filename}`
       downloadButton.href = imgURL
       downloadButton.target="_blank"
       let canvasOrImg = document.createElement(tagName)
