@@ -82,7 +82,10 @@ cob.custom.customize.push(function (core, utils, ui) {
           childNode.textContent=""
           continue
         }
-        let fileName = esDoc.ficheiro[numFiles]
+        let fileName = ""
+        if(esDoc[fieldInfo.field]) {
+          fileName = esDoc[fieldInfo.field][numFiles]
+        }
         numFiles++
         childNode.classList.add("flex")
 
