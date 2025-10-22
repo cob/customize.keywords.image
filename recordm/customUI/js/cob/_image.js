@@ -2,7 +2,7 @@
 const pdfRegex = /([a-z\-_0-9\/\:\.]*\.(pdf))/i
 const imageMatcher = /[$]image(\(.+\))?/;
 const imgRegex = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/i
-const fileMatcher = /[$]file/;
+const fileMatcher = /([$]file|[$]extFile)/;
 const drawMatcher = /[$]draw/;
 const readOnlyMatcher = /[$]readonly/;
 
@@ -26,7 +26,7 @@ cob.custom.customize.push(function (core, utils, ui) {
       if (imgLink) {
         const argsMatch = fp.field.fieldDefinition.description.match(imageMatcher);
         const args = argsMatch && argsMatch[1]
-        
+
         const replaceArgMatcher = /\(\[.*replace:true.*\]\)/;
         const widthArgMatcher = /\(\[.*width:(\d+).*\]\)/;
 
@@ -35,11 +35,11 @@ cob.custom.customize.push(function (core, utils, ui) {
 
         let showMsg = "Click <b>here</b> to show/hide image details";
         switch (core.getLanguage()) {
-          case "pt" : 
+          case "pt" :
             showMsg = "Clicar <b>aqui</b> para ver/esconder os detalhes"
             break
         }
-        
+
         if(imgLink.match(imgRegex)){
           const $image = $(
             '<div class="dollarImgDiv" >' +
@@ -64,7 +64,7 @@ cob.custom.customize.push(function (core, utils, ui) {
         runOnce = false
       }
       node.classList.add("dollarImgCell");
-      
+
       let numFiles = 0
       for(let childNode of node.childNodes) {
         let link;
@@ -134,7 +134,7 @@ function handleShowHidePDFPreview(e) {
   if (e.target.classList.contains("dollarImgThg")) {
     showCanvasHandler(e)
   }else{
-    hideAllCanvas(null) 
+    hideAllCanvas(null)
   }
 }
 function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
@@ -206,7 +206,7 @@ function showCanvasHandler(event) {
     hideAllCanvas(canvasDiv);
     canvasDiv.classList.toggle("dollarImgHideCanvas")
     canvasDiv.classList.toggle("dollarImgShowCanvas")
-    
+
     controlCanvasPosition(event.clientX,canvasDiv)
     if(canvasDiv.classList.contains("dollarImgShowCanvas")){
       calcCanvasParentHeight(canvasDiv,canvasDiv.children[1])
