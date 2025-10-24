@@ -39,7 +39,7 @@ cob.custom.customize.push(function (core, utils, ui) {
             showMsg = "Clicar <b>aqui</b> para ver/esconder os detalhes"
             break
         }
-        
+
         if(imgLink.match(imgRegex)){
           const $image = $(
             '<div class="dollarImgDiv" >' +
@@ -64,7 +64,7 @@ cob.custom.customize.push(function (core, utils, ui) {
         runOnce = false
       }
       node.classList.add("dollarImgCell");
-      
+
       let numFiles = 0
       for(let childNode of node.childNodes) {
         let link;
@@ -213,7 +213,7 @@ function showCanvasHandler(event) {
     hideAllCanvas(canvasDiv);
     canvasDiv.classList.toggle("dollarImgHideCanvas")
     canvasDiv.classList.toggle("dollarImgShowCanvas")
-    
+
     controlCanvasPosition(event.clientX,canvasDiv)
     if(canvasDiv.classList.contains("dollarImgShowCanvas")){
       calcCanvasParentHeight(canvasDiv,canvasDiv.children[1])
@@ -269,7 +269,6 @@ function showCanvasHandler(event) {
         buttonBar.appendChild(pageInfo);
         buttonBar.appendChild(nextButton);
       }
-
 
       let canvasOrImg = document.createElement(tagName)
       canvasOrImg.classList.add("dollarImgCanvas")
