@@ -39,7 +39,7 @@ cob.custom.customize.push(function (core, utils, ui) {
             showMsg = "Clicar <b>aqui</b> para ver/esconder os detalhes"
             break
         }
-
+        
         if(imgLink.match(imgRegex)){
           const $image = $(
             '<div class="dollarImgDiv" >' +
@@ -64,7 +64,7 @@ cob.custom.customize.push(function (core, utils, ui) {
         runOnce = false
       }
       node.classList.add("dollarImgCell");
-
+      
       let numFiles = 0
       for(let childNode of node.childNodes) {
         let link;
@@ -133,11 +133,9 @@ function pdfPreviewDocumentOnclickHandler() {
 function handleShowHidePDFPreview(e) {
   if (e.target.classList.contains("dollarImgThg") || e.target.classList.contains("dollarImgCanvas_inst")) {
     showCanvasHandler(e)
-  // if the click was inside the page controls area, dont hide
-  } else if (e.target.closest(".page-controls")) {
-    return;
-  }else{
-    hideAllCanvas(null)
+
+  }else if (!e.target.closest(".controlPageBar")) { // if the click was inside the page controls area, dont hide
+    hideAllCanvas(null) 
   }
 }
 function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
@@ -165,9 +163,10 @@ function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
   }
 }
 function pdfPreviewOnInstances(imgFieldPresenter,fileURL,showMsg,replaceFlag) {
+  const fileName = decodeURIComponent(fileURL.split("/").pop());  //get filename and decode to utf-8
   const $image = $(
     '<div class="dollarImgDiv" >' +
-      '<canvas class="dollarImgCanvas_inst" data-hrf="' + fileURL + '"></canvas>' +
+      '<canvas class="dollarImgCanvas_inst" data-hrf="' + fileURL + '" data-filename="' + fileName +'"></canvas>' +
       "<span>"+showMsg+"</span>" +
     "</div>"
   );
@@ -194,9 +193,9 @@ function controlCanvasPosition(x,canvasDiv) {
   }
 }
 function calcCanvasParentHeight(canvasParent,canvas){
-  let h = window.innerHeight*0.95
+  let h = window.innerHeight*0.90
   if(h<canvas.clientHeight){
-    canvas.style.height = `${h}px`. //to fit the bottom bar
+    canvas.style.height = `${h}px` //to fit the bottom bar
   }else{
     canvasParent.style.height = `unset`
   }
@@ -211,7 +210,7 @@ function showCanvasHandler(event) {
     hideAllCanvas(canvasDiv);
     canvasDiv.classList.toggle("dollarImgHideCanvas")
     canvasDiv.classList.toggle("dollarImgShowCanvas")
-
+    
     controlCanvasPosition(event.clientX,canvasDiv)
     if(canvasDiv.classList.contains("dollarImgShowCanvas")){
       calcCanvasParentHeight(canvasDiv,canvasDiv.children[1])
@@ -219,53 +218,54 @@ function showCanvasHandler(event) {
   } else {
     let imgURL = clickedElement.getAttribute("data-hrf")
     if (imgURL) {
-      let tagName = "canvas"
-      if (imgURL == "IMG") {
-        imgURL = clickedElement.src
-        tagName = "img"
-      }
+
+      //common between img and pdf
       clickedElement.removeAttribute("data-hrf")
       let canvasParent = document.createElement("div")
       let downloadButton = document.createElement("a")
       downloadButton.textContent = `Download - ${clickedElement.dataset.filename}`
-      downloadButton.href = imgURL
-      downloadButton.target="_blank"
+      downloadButton.href = (imgURL !== "IMG") ? imgURL : clickedElement.src;  //get imgURl if pdf or IMG
+      downloadButton.target="_blank" 
 
-      //create elements to later edit
+      //create alements to later edit if it a pdf
+      const buttonBar = document.createElement("div");  
       const pageInfo = document.createElement("span");
       const nextButton = document.createElement("button");
       const previousButton = document.createElement("button");
-      pageInfo.classList.add("page-info");
 
-      //fetch pdf pages usig pdfjslib
-      var totalPag //num of pages of the pdf
-      var pdfjsLib = window['pdfjs-dist/build/pdf'];
-      pdfjsLib.getDocument(imgURL).promise.then(function (pdf) {
-          var numPages = pdf.numPages;
-          totalPag = numPages;
-          pageInfo.textContent = `Page ${pageNumber} / ${numPages}`;
+      let tagName = "canvas"
+      if (imgURL == "IMG") {
+        imgURL = clickedElement.src
+        tagName = "img"
+      } else { //is a pdf 
 
-          //page controls unnecessary if there is only one page
-          if (numPages === 1) {
-            nextButton.classList.add("hidden");
-            previousButton.classList.add("hidden");
-          }
-      })
+        //fetch pdf pages usig pdfjslib
+        var totalPag
+        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+        pdfjsLib.getDocument(imgURL).promise.then(function (pdf) {
+            var numPages = pdf.numPages;
+            totalPag = numPages;
+            pageInfo.textContent = `Page ${pageNumber} / ${numPages}`;
 
-      //build controls
-      nextButton.classList.add("nextPage-button")
-      nextButton.textContent = "Next Page";
+            //page controls unnecessary if there is only one page
+            if (numPages === 1) {
+              nextButton.classList.add("hidden");
+              previousButton.classList.add("hidden");
+            }
+        })
 
-      previousButton.classList.add("previousPage-button")
-      previousButton.textContent = "Previous Page";
+        //build controls and add text and class
+        pageInfo.classList.add("page-info");
+        nextButton.classList.add("controlPageButton")
+        nextButton.textContent = "Next";
+        previousButton.classList.add("controlPageButton")
+        previousButton.textContent = "Previous";
 
-      const buttonBar = document.createElement("div");
-      buttonBar.classList.add("page-controls");
-      buttonBar.appendChild(previousButton);
-      buttonBar.appendChild(pageInfo);
-      buttonBar.appendChild(nextButton);
-      //style controls
-      stylePageControls(buttonBar, nextButton, previousButton, pageInfo);
+        buttonBar.classList.add("controlPageBar");
+        buttonBar.appendChild(previousButton);
+        buttonBar.appendChild(pageInfo);
+        buttonBar.appendChild(nextButton);
+      }
 
 
       let canvasOrImg = document.createElement(tagName)
@@ -312,37 +312,6 @@ function showCanvasHandler(event) {
       }
     }
   }
-}
-
-function stylePageControls(buttonBar, nextButton, previousButton, pageInfo) {
-  // ButtonBar styles
-  Object.assign(buttonBar.style, {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",  
-    gap: "10px",
-    marginTop: "10px",
-    marginBottom: "10px",
-  });
-
-  // shared button styles
-  const buttonStyle = {
-    backgroundColor: "#84b1e1ff",
-    color: "white",
-    border: "none",
-    padding: "6px 12px",
-    borderRadius: "6px",
-    cursor: "pointer",
-    width: "15%"
-  };
-  //pageInfo text color styles
-  const pageInfoStyle = {
-    color: "black"
-  }
-
-  Object.assign(pageInfo.style, pageInfoStyle);
-  Object.assign(nextButton.style, buttonStyle);
-  Object.assign(previousButton.style, buttonStyle);
 }
 
 function hideAllCanvas(currentCanvas) {

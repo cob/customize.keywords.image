@@ -99,3 +99,34 @@ div.dollarImgDiv:hover span {
 	display: inline-block;
 	cursor: pointer;
 }
+
+.controlPageBar {
+  border-top: 1px solid #000;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.controlPageBar button {
+  background-color: #84b1e1;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 15%;
+  transition: background-color 0.2s ease;
+}
+
+.controlPageBar button:hover {
+  background-color: #6b9cd1;
+}
+
+.controlPageBar .page-info {
+  color: black;
+  font-weight: 500;
+}
