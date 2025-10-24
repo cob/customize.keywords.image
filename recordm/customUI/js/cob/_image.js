@@ -173,7 +173,7 @@ function pdfPreviewOnInstances(imgFieldPresenter,fileURL,showMsg,replaceFlag) {
   );
   imgFieldPresenter.append($image[0]);
   let pdfCanvas = $image.children("canvas")[0]
-  //onInstance preview no open is just the first page
+  //onInstance preview (before click) is just the first page
   startPDFRendering(pdfCanvas, fileURL, null, 1);
 }
 
@@ -204,7 +204,7 @@ function calcCanvasParentHeight(canvasParent,canvas){
 
 function showCanvasHandler(event) {
   let pageNumber = 1;  //to keep the page number of the pdf
-  let currentPage;  //store page value 
+  let currentPage;     //store the current page value 
   let clickedElement = event.target
   let canvasDiv = clickedElement.parentElement.nextElementSibling
   if (canvasDiv) {
@@ -238,7 +238,7 @@ function showCanvasHandler(event) {
       pageInfo.classList.add("page-info");
 
       //fetch pdf pages usig pdfjslib
-      var totalPag
+      var totalPag //num of pages of the pdf
       var pdfjsLib = window['pdfjs-dist/build/pdf'];
       pdfjsLib.getDocument(imgURL).promise.then(function (pdf) {
           var numPages = pdf.numPages;
@@ -335,7 +335,7 @@ function stylePageControls(buttonBar, nextButton, previousButton, pageInfo) {
     cursor: "pointer",
     width: "15%"
   };
-
+  //pageInfo text color styles
   const pageInfoStyle = {
     color: "black"
   }
@@ -354,6 +354,7 @@ function hideAllCanvas(currentCanvas) {
   }
 }
 
+//render the the given page of the pdf
 function startPDFRendering(canvas, url2,canvasGrandParent, pageNumber) {
   var pdfjsLib = window['pdfjs-dist/build/pdf'];
   pdfjsLib.GlobalWorkerOptions.workerSrc = './localresource/js/cob/pdf.worker.min.js';
