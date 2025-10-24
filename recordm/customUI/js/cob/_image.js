@@ -48,9 +48,9 @@ cob.custom.customize.push(function (core, utils, ui) {
             "</div>"
           );
           imgFieldPresenter.append($image[0]);
-          applyArgs($image.children("span")[0],imgFieldPresenter,replaceFlag,width)
+          applyArgs($image.children("span")[0],imgFieldPresenter,replaceFlag,width, "img")
         }else if(imgLink.match(pdfRegex)){
-          pdfPreviewOnInstances(imgFieldPresenter,imgLink,showMsg,replaceFlag)
+          pdfPreviewOnInstances(imgFieldPresenter,imgLink,showMsg,replaceFlag, width)
         }
       }
     });
@@ -131,13 +131,14 @@ function pdfPreviewDocumentOnclickHandler() {
   }
 }
 function handleShowHidePDFPreview(e) {
-  if (e.target.classList.contains("dollarImgThg")) {
+  if (e.target.classList.contains("dollarImgThg") || e.target.classList.contains("dollarImgCanvas_inst")) {
     showCanvasHandler(e)
-  }else{
-    hideAllCanvas(null)
+
+  }else if (!e.target.closest(".controlPageBar")) { // if the click was inside the page controls area, dont hide
+    hideAllCanvas(null) 
   }
 }
-function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
+function applyArgs(span,imgFieldPresenter,replaceFlag,width, type) {
   let widthCalc;
   if (width) {
     widthCalc = width+'px'
@@ -145,13 +146,15 @@ function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
   }else{
     widthCalc = window.getComputedStyle(document.querySelector(':root')).getPropertyValue('--defaultWidth')
   }
-  let zoom = false
-  span.parentElement.firstChild.onclick = () => {
-    zoom = !zoom;
-    if (zoom) {
-      span.parentElement.style.setProperty('--defaultWidth', 600 + 'px');
-    } else {
-      span.parentElement.style.setProperty('--defaultWidth', widthCalc);
+  if (type == "img"){
+    let zoom = false
+    span.parentElement.firstChild.onclick = () => {
+      zoom = !zoom;
+      if (zoom) {
+        span.parentElement.style.setProperty('--defaultWidth', 600 + 'px');
+      } else {
+        span.parentElement.style.setProperty('--defaultWidth', widthCalc);
+      }
     }
   }
   let show = !replaceFlag
@@ -161,17 +164,19 @@ function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
     imgFieldPresenter.children[0].style.display = show ? "" : "none";
   }
 }
-function pdfPreviewOnInstances(imgFieldPresenter,fileURL,showMsg,replaceFlag) {
+function pdfPreviewOnInstances(imgFieldPresenter,fileURL,showMsg,replaceFlag, width) {
+  const fileName = decodeURIComponent(fileURL.split("/").pop());  //get filename and decode to utf-8
   const $image = $(
     '<div class="dollarImgDiv" >' +
-      '<canvas class="dollarImgCanvas_inst"></canvas>' +
+      '<canvas class="dollarImgCanvas_inst" data-hrf="' + fileURL + '" data-filename="' + fileName +'"></canvas>' +
       "<span>"+showMsg+"</span>" +
     "</div>"
   );
   imgFieldPresenter.append($image[0]);
   let pdfCanvas = $image.children("canvas")[0]
-  applyArgs($image.children("span")[0],imgFieldPresenter,replaceFlag)
-  startPDFRendering(pdfCanvas, fileURL, null);
+  applyArgs($image.children("span")[0],imgFieldPresenter,replaceFlag, width, "pdf")
+  //onInstance preview (before click) is just the first page
+  startPDFRendering(pdfCanvas, fileURL, null, 1);
 }
 
 function optimizedResizeHandlerWrapper(){
@@ -191,15 +196,17 @@ function controlCanvasPosition(x,canvasDiv) {
   }
 }
 function calcCanvasParentHeight(canvasParent,canvas){
-  let h = window.innerHeight*0.95
+  let h = window.innerHeight*0.90
   if(h<canvas.clientHeight){
-    canvasParent.style.height = `${h}px`
+    canvas.style.height = `${h}px` //to fit the bottom bar
   }else{
     canvasParent.style.height = `unset`
   }
 }
 
 function showCanvasHandler(event) {
+  let pageNumber = 1;  //to keep the page number of the pdf
+  let currentPage;     //store the current page value 
   let clickedElement = event.target
   let canvasDiv = clickedElement.parentElement.nextElementSibling
   if (canvasDiv) {
@@ -214,32 +221,101 @@ function showCanvasHandler(event) {
   } else {
     let imgURL = clickedElement.getAttribute("data-hrf")
     if (imgURL) {
-      let tagName = "canvas"
-      if (imgURL == "IMG") {
-        imgURL = clickedElement.src
-        tagName = "img"
-      }
+
+      //common between img and pdf
       clickedElement.removeAttribute("data-hrf")
       let canvasParent = document.createElement("div")
       let downloadButton = document.createElement("a")
       downloadButton.textContent = `Download - ${clickedElement.dataset.filename}`
-      downloadButton.href = imgURL
-      downloadButton.target="_blank"
+      downloadButton.href = (imgURL !== "IMG") ? imgURL : clickedElement.src;  //get imgURl if pdf or IMG
+      downloadButton.target="_blank" 
+
+      //create alements to later edit if it a pdf
+      const buttonBar = document.createElement("div");  
+      const pageInfo = document.createElement("span");
+      const nextButton = document.createElement("button");
+      const previousButton = document.createElement("button");
+
+      let tagName = "canvas"
+      if (imgURL == "IMG") {
+        imgURL = clickedElement.src
+        tagName = "img"
+      } else { //is a pdf 
+
+        //fetch pdf pages usig pdfjslib
+        var totalPag
+        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+        pdfjsLib.getDocument(imgURL).promise.then(function (pdf) {
+            var numPages = pdf.numPages;
+            totalPag = numPages;
+            pageInfo.textContent = `Page ${pageNumber} / ${numPages}`;
+
+            //page controls unnecessary if there is only one page
+            if (numPages === 1) {
+              nextButton.classList.add("hidden");
+              previousButton.classList.add("hidden");
+            }
+        })
+
+        //build controls and add text and class
+        pageInfo.classList.add("page-info");
+        nextButton.classList.add("controlPageButton")
+        nextButton.textContent = "Next";
+        previousButton.classList.add("controlPageButton")
+        previousButton.textContent = "Previous";
+
+        buttonBar.classList.add("controlPageBar");
+        buttonBar.appendChild(previousButton);
+        buttonBar.appendChild(pageInfo);
+        buttonBar.appendChild(nextButton);
+      }
+
       let canvasOrImg = document.createElement(tagName)
       canvasOrImg.classList.add("dollarImgCanvas")
       canvasParent.className = "transition-opacity duration-200 dollarImgCanvasp"
+      
       canvasParent.appendChild(downloadButton)
       canvasParent.appendChild(canvasOrImg)
+      canvasParent.appendChild(buttonBar);
       let grandParent = clickedElement.parentElement.parentElement
+
+      // When the "nextPage" button is clicked
+      nextButton.addEventListener("click", () => {
+        if (currentPage) {
+          pageNumber = currentPage;
+        }
+        if (pageNumber < totalPag){
+          pageNumber++;  //change page
+          currentPage = pageNumber;
+          pageInfo.textContent = `Page ${pageNumber} / ${totalPag}`;
+          startPDFRendering(canvasOrImg,imgURL, [grandParent, event.clientX], pageNumber)
+        }
+      });
+
+      // When the "previousPage" button is clicked
+      previousButton.addEventListener("click", () => {
+        if (currentPage) {
+          pageNumber = currentPage;
+        }
+        if (pageNumber>1){
+          pageNumber--;  //change page
+          currentPage = pageNumber;
+          pageInfo.textContent = `Page ${pageNumber} / ${totalPag}`;
+          startPDFRendering(canvasOrImg,imgURL, [grandParent, event.clientX], pageNumber)
+        }
+      });
+
       if (tagName == "img") {
         canvasOrImg.src=imgURL
         firstClickToShowPreview(canvasOrImg,grandParent,event.clientX)
       } else {
-        startPDFRendering(canvasOrImg,imgURL, [grandParent, event.clientX])
+        //Render pdf page
+        startPDFRendering(canvasOrImg,imgURL, [grandParent, event.clientX], pageNumber)
       }
     }
   }
 }
+
 function hideAllCanvas(currentCanvas) {
   let canvas = document.getElementsByClassName("dollarImgShowCanvas")
   for (let child of canvas) {
@@ -248,12 +324,13 @@ function hideAllCanvas(currentCanvas) {
     }
   }
 }
-function startPDFRendering(canvas, url2,canvasGrandParent) {
+
+//render the the given page of the pdf
+function startPDFRendering(canvas, url2,canvasGrandParent, pageNumber) {
   var pdfjsLib = window['pdfjs-dist/build/pdf'];
   pdfjsLib.GlobalWorkerOptions.workerSrc = './localresource/js/cob/pdf.worker.min.js';
   var loadingTask = pdfjsLib.getDocument(url2);
   loadingTask.promise.then(function (pdf) {
-    var pageNumber = 1;
     pdf.getPage(pageNumber).then(function (page) {
       var viewport = page.getViewport({ scale: 2 });
       var renderTask = page.render(getCanvasContex(canvas, viewport));
