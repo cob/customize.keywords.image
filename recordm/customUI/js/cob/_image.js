@@ -48,9 +48,9 @@ cob.custom.customize.push(function (core, utils, ui) {
             "</div>"
           );
           imgFieldPresenter.append($image[0]);
-          applyArgs($image.children("span")[0],imgFieldPresenter,replaceFlag,width)
+          applyArgs($image.children("span")[0],imgFieldPresenter,replaceFlag,width, "img")
         }else if(imgLink.match(pdfRegex)){
-          pdfPreviewOnInstances(imgFieldPresenter,imgLink,showMsg,replaceFlag)
+          pdfPreviewOnInstances(imgFieldPresenter,imgLink,showMsg,replaceFlag, width)
         }
       }
     });
@@ -138,7 +138,7 @@ function handleShowHidePDFPreview(e) {
     hideAllCanvas(null) 
   }
 }
-function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
+function applyArgs(span,imgFieldPresenter,replaceFlag,width, type) {
   let widthCalc;
   if (width) {
     widthCalc = width+'px'
@@ -146,13 +146,15 @@ function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
   }else{
     widthCalc = window.getComputedStyle(document.querySelector(':root')).getPropertyValue('--defaultWidth')
   }
-  let zoom = false
-  span.parentElement.firstChild.onclick = () => {
-    zoom = !zoom;
-    if (zoom) {
-      span.parentElement.style.setProperty('--defaultWidth', 600 + 'px');
-    } else {
-      span.parentElement.style.setProperty('--defaultWidth', widthCalc);
+  if (type == "img"){
+    let zoom = false
+    span.parentElement.firstChild.onclick = () => {
+      zoom = !zoom;
+      if (zoom) {
+        span.parentElement.style.setProperty('--defaultWidth', 600 + 'px');
+      } else {
+        span.parentElement.style.setProperty('--defaultWidth', widthCalc);
+      }
     }
   }
   let show = !replaceFlag
@@ -162,7 +164,7 @@ function applyArgs(span,imgFieldPresenter,replaceFlag,width) {
     imgFieldPresenter.children[0].style.display = show ? "" : "none";
   }
 }
-function pdfPreviewOnInstances(imgFieldPresenter,fileURL,showMsg,replaceFlag) {
+function pdfPreviewOnInstances(imgFieldPresenter,fileURL,showMsg,replaceFlag, width) {
   const fileName = decodeURIComponent(fileURL.split("/").pop());  //get filename and decode to utf-8
   const $image = $(
     '<div class="dollarImgDiv" >' +
@@ -172,6 +174,7 @@ function pdfPreviewOnInstances(imgFieldPresenter,fileURL,showMsg,replaceFlag) {
   );
   imgFieldPresenter.append($image[0]);
   let pdfCanvas = $image.children("canvas")[0]
+  applyArgs($image.children("span")[0],imgFieldPresenter,replaceFlag, width, "pdf")
   //onInstance preview (before click) is just the first page
   startPDFRendering(pdfCanvas, fileURL, null, 1);
 }
