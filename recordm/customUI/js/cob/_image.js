@@ -8,10 +8,15 @@ const readOnlyMatcher = /[$]readonly/;
 
 const pdfURLIcon = "localresource/icons/pdf3.png"
 
+let runOnce;
 cob.custom.customize.push(function (core, utils, ui) {
-
+  runOnce = true
   core.customizeAllInstances((instance, presenter) => {
     if (instance.isNew() || presenter.isGroupEdit()) return;
+    if(runOnce){
+      pdfPreviewDocumentOnclickHandler()
+      runOnce = false
+    }
     const imagesFPs = presenter.findFieldPs((fp) => imageMatcher.exec( fp.field.fieldDefinition.description ));
     imagesFPs.forEach((fp) => {
 
@@ -55,7 +60,7 @@ cob.custom.customize.push(function (core, utils, ui) {
       }
     });
   });
-  let runOnce = true
+  runOnce = true
   core.customizeAllColumns("*", function (node, esDoc, fieldInfo) {
     if (imageMatcher.exec(fieldInfo.fieldDefDescription)) {
       //PDF PREVIEW FOR COLUMNS
