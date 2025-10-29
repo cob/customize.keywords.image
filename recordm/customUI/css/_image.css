@@ -46,6 +46,12 @@
 	overflow: auto;
 	opacity: 1;
 }
+
+.dollarImgShowZoom {
+	width: 1100px !important;
+}
+
+
 .dollarImgShowCanvas a{
 	display: inline-block;
 	text-align: center;

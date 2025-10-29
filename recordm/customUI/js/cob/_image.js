@@ -139,7 +139,7 @@ function handleShowHidePDFPreview(e) {
   if (e.target.classList.contains("dollarImgThg") || e.target.classList.contains("dollarImgCanvas_inst")) {
     showCanvasHandler(e)
 
-  }else if (!e.target.closest(".controlPageBar")) { // if the click was inside the page controls area, dont hide
+  }else if (!e.target.closest(".controlPageBar") && !e.target.closest(".dollarImgCanvas")) { // if the click was inside the page controls area or document, dont hide
     hideAllCanvas(null) 
   }
 }
@@ -201,9 +201,9 @@ function controlCanvasPosition(x,canvasDiv) {
   }
 }
 function calcCanvasParentHeight(canvasParent,canvas){
-  let h = window.innerHeight*0.90
+  let h = window.innerHeight*0.95
   if(h<canvas.clientHeight){
-    canvas.style.height = `${h}px` //to fit the bottom bar
+    canvasParent.style.height = `${h}px`
   }else{
     canvasParent.style.height = `unset`
   }
@@ -283,6 +283,15 @@ function showCanvasHandler(event) {
       canvasParent.appendChild(canvasOrImg)
       canvasParent.appendChild(buttonBar);
       let grandParent = clickedElement.parentElement.parentElement
+
+      //when the document is clicked
+      canvasOrImg.addEventListener("click", () => {
+        //set new class for zoomed elements
+        canvasOrImg.classList.toggle("dollarImgShowZoom")
+        buttonBar.classList.toggle("dollarImgShowZoom")
+        downloadButton.classList.toggle("dollarImgShowZoom")
+        calcCanvasParentHeight(canvasOrImg.parentElement,canvasOrImg)
+      });
 
       // When the "nextPage" button is clicked
       nextButton.addEventListener("click", () => {
